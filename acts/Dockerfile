@@ -1,5 +1,5 @@
 FROM centos:latest
-ARG PORT=80
+ARG PORT=5000
 WORKDIR /opt/acts
 
 COPY . .
