@@ -40,7 +40,7 @@ def shutdown():
 def category_create(category_name, acts):
     """
         This function creates a category
-        
+
         :param category_name: category name
         :type category_name: str
         :param acts: no. of acts
@@ -48,7 +48,7 @@ def category_create(category_name, acts):
         """
     global DBB_CONN
     global DBB_CUR
-    
+
     try:
         cursor.execute('PRAGMA foreign_keys = ON')
         cursor.execute(
@@ -64,7 +64,7 @@ def category_create(category_name, acts):
 def act_create(act_id, username, timestamp, caption, category, image, upvotes):
     """
         This function creates an act.
-        
+
         :param act_id: Act ID
         :type act_id: int
         :param username: User name
@@ -82,7 +82,7 @@ def act_create(act_id, username, timestamp, caption, category, image, upvotes):
         """
     global conn
     global cursor
-    
+
     try:
         cursor.execute('PRAGMA foreign_keys = ON')
         cursor.execute(
@@ -104,12 +104,12 @@ def act_create(act_id, username, timestamp, caption, category, image, upvotes):
 def act_exists(act_id):
     """
         This function checks if an act exists
-        
+
         :param act_id: Act ID
         :type act_id: int
         """
     global cursor
-    
+
     cursor.execute(
             "SELECT EXISTS (SELECT 1 FROM acts WHERE act_id=?);",
             (act_id,)
@@ -123,13 +123,13 @@ def act_exists(act_id):
 def act_upvote(act_id):
     """
         This function adds an upvote to the act
-        
+
         :param act_id: Act ID
         :type user_id: int
         """
     global conn
     global cursor
-    
+
     try:
         cursor.execute(
             "UPDATE acts SET upvotes = upvotes + 1 WHERE act_id=?",
@@ -143,13 +143,13 @@ def act_upvote(act_id):
 def category_remove(category_name):
     """
         This function removes a category
-        
+
         :param category_name: category name
         :type category_name: str
         """
     global conn
     global cursor
-    
+
     try:
         cursor.execute(
             "DELETE FROM categories WHERE category_name=?",
@@ -166,13 +166,13 @@ def category_remove(category_name):
 def act_remove(act_id):
     """
         This function removes an act
-        
+
         :param act_id: Act ID
         :type act_id: int
         """
     global conn
     global cursor
-    
+
     try:
         cursor.execute(
             "DELETE FROM acts WHERE act_id=?",
@@ -189,12 +189,12 @@ def act_remove(act_id):
 def category_get(category_name):
     """
         This function retrieves all properties of a category
-        
+
         :param category_name: Category name
         :type category_name: str
         """
     global cursor
-    
+
     #execute database query
     if category_name:
         cursor.execute(
@@ -217,12 +217,12 @@ def category_get(category_name):
 def acts_get(act_id):
     """
         This function retrieves all properties of an act
-        
+
         :param act_id: Act ID
         :type act_id: int
         """
     global cursor
-    
+
 
     if act_id:
         cursor.execute(
@@ -251,12 +251,12 @@ def acts_get(act_id):
 def category_acts_count(category_name):
     """
         This function retrieves the number of acts in a category
-        
+
         :param category_name: Category name
         :type category_name: str
         """
     global cursor
-    
+
     try:
         cursor.execute(
                        "SELECT count(*) FROM acts WHERE category=?;",
@@ -275,12 +275,12 @@ def category_acts_count(category_name):
 def category_exists(category_name):
     """
         This function checks if a category exists
-        
+
         :param category_name: Category name
         :type category_name: str
         """
     global cursor
-    
+
     cursor.execute(
             "SELECT EXISTS (SELECT 1 FROM categories WHERE category_name=?);",
             (category_name,)
@@ -294,12 +294,12 @@ def category_exists(category_name):
 def category_acts_get(category_name):
     """
         This function retrieves all the acts under a category
-        
+
         :param category_name: Category name
         :type category_name: str
         """
     global cursor
-    
+
     cursor.execute(
         "SELECT count(*) FROM acts WHERE category=?;",
         (category_name,)
@@ -332,7 +332,7 @@ def category_acts_get(category_name):
 def acts_get_count_range(category_name, startRange, endRange):
     """
         This function retrieves the acts under a category within a given range
-        
+
         :param category_name: Category name
         :type category_name: str
         :param startRange: Starting range
@@ -405,7 +405,7 @@ def api_create_category():
 def api_delete_category(category_name):
     """
         This function deletes a particular category.
-        
+
         :param category_name: category name
         :type category_name: str
         """
@@ -490,7 +490,7 @@ def api_act_upvote():
 def api_delete_act(act_id):
     """
         This function deletes a particular act.
-        
+
         :param act_id: Act ID
         :type act_id: int
         """
@@ -536,7 +536,7 @@ def api_act_health():
     if is_crashed:
         return jsonify(error=500), 500
     else:
-        return jsonify(error=200), 200
+        return jsonify(success=200), 200
 
 @APP.route("/api/v1/_crash", methods=["POST"])
 def api_act_crash():
@@ -548,8 +548,8 @@ def api_act_crash():
     else:
         global is_crashed
         is_crashed = True
-        return jsonify(error=200), 200
-        
+        return jsonify(success=200), 200
+
 ##################################################################
 #   MAIN FUNCTION                                                #
 #################################################################
