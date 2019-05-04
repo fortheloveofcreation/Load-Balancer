@@ -1,27 +1,28 @@
 var Docker = require("dockerode");
-const axios = require('axios');
-var fs = require('fs');
-
 var docker = new Docker({socketPath: '/var/run/docker.sock'});
-var list = require("./containers.json");
-
+const axios = require('axios');
 var ONE_SEC_IN_MS = 1000;
 var g_containersList = {};
+var g_number_of_active_containers = 0;
+
+var g_host_ip = "http://127.0.0.1";
+
+var next_request_handler_index = 0;
 
 var f_counter = 0;
-
-
 function listContainerCB(containersInfo) {
     var containersList =  containersInfo;
-    g_containersList = containersInfo;
+
     if(containersList){
        var containers = containersList.container;
        if(containers){
-           containers.forEach(function (containerInfo) {
+           g_containersList = containersInfo;
+           g_number_of_active_containers = containers.length;
+           containers.forEach(function (containerInfo, index) {
                 var url = "http://127.0.0.1:"+containerInfo.port+"/api/v1/_health";
                 axios.get(url)
                     .then(resp =>{
-                        console.log("host: http://127.0.0.1:"+containerInfo.port+" | health resp: "+resp.status);
+                        //console.log("host: http://127.0.0.1:"+containerInfo.port+" | health resp: "+resp.status);
                         //donot do anything
                     })
                     .catch(err => {
@@ -29,7 +30,9 @@ function listContainerCB(containersInfo) {
                        // console.log("port: ",containerInfo.port," resp:",err.response.status);
                         if(err && err.response && err.response.status === 500){
                             // restart container
-                            console.log("host: http://127.0.0.1:"+containerInfo.port+ " | health resp: "+err.response.status);
+                         //   console.log("host: http://127.0.0.1:"+containerInfo.port+ " | health resp: "+err.response.status);
+                            g_containersList.container.splice(index,1);
+                            g_number_of_active_containers = containers.length;
                             stopContainer(containerInfo.id,containerInfo.port);
                             //docker.getContainer(containerInfo.id).stop(dummyCB);
                         }
@@ -42,10 +45,18 @@ function listContainerCB(containersInfo) {
 function healthCheck(){
     f_counter++;
     listContainers(listContainerCB);
-    if(f_counter == 10){
-        let port = 8002;
-        runContainer(port.toString());
-    }
+    // if(f_counter == 10){
+    //      let port = 8002;
+    //      runContainer(port.toString());
+    //  }
+    // if(f_counter == 20){
+    //      let port = 8003;
+    //      runContainer(port.toString());
+    //  }
+    //
+    //  if(f_counter == 25){
+    //     console.log("containerslist : ",JSON.stringify(g_containersList));
+    //  }
 }
 
 
@@ -53,7 +64,7 @@ function healthCheck(){
 *
 *   Public Functions
 * */
-function init() {
+function init(debug_value) {
     setInterval(healthCheck,ONE_SEC_IN_MS);
 }
 
@@ -94,7 +105,7 @@ function runContainer(port){
 }
 
 function getContainers(){
-    return containersList;
+    return g_containersList;
 }
 
 function formContainersList(dataJson){
@@ -114,7 +125,7 @@ function listContainers(callback){
                 "isRunning":true
             };
             //console.log("publicPort: ",containerInfo.Ports[1].PublicPort);
-            dataJson.container.push(contObj);
+            dataJson.container.unshift(contObj);
 		});
 	    if(typeof callback == "function")
 	        callback(dataJson);
@@ -124,7 +135,21 @@ function listContainers(callback){
 
 }
 
+function getHostUrl(){
+    if(next_request_handler_index > (g_number_of_active_containers - 1))
+        next_request_handler_index = 0;
+
+    if(g_number_of_active_containers){
+        let host = g_host_ip + ":" + g_containersList.container[next_request_handler_index].port;
+        next_request_handler_index++;
+
+        return host;
+    }
+
+}
+
 module.exports.init = init;
 module.exports.runContainer = runContainer;
 module.exports.listContainers = listContainers;
 module.exports.getContainers = getContainers;
+module.exports.getHostUrl = getHostUrl;

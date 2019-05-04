@@ -3,13 +3,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const http = require('http');
 const app = express();
-
+var DEBUG = true;
 /* Internal Libraries */
 var containerUtil = require('./containerUtil');
+var loadBalancerUtil = require('./loadBalancerUtil');
 
 /* Globals */
 const ecExposedPort = 80;
-
 
 /*
 *
@@ -19,7 +19,7 @@ const ecExposedPort = 80;
 
 /* Run a intial/first container on port 8000 */
 function init(){
-    var port = 8001;
+    var port = 8000;
     containerUtil.runContainer(port.toString());
     containerUtil.init();
 
@@ -27,9 +27,9 @@ function init(){
 }
 
 
-function routeToContainer(){
-
-
+function routeToContainer(request, response){
+    console.log("<request> ",request.method, "url: ",request.url);
+    loadBalancerUtil.handleRequest(request, response);
 }
 
 app.get('/', function (req, res) {
@@ -37,11 +37,17 @@ app.get('/', function (req, res) {
 });
 
 app.get('/api/v1/acts/',routeToContainer);
+app.post('/api/v1/acts/',routeToContainer);
 app.get('/api/v1/categories/',routeToContainer);
+app.post('/api/v1/categories/',routeToContainer);
 
 app.listen(ecExposedPort, function () {
     init();
     console.log('Server Running on port '+ ecExposedPort);
+});
+
+process.argv.forEach(function (val, index, array) {
+  console.log(index + ': ' + val);
 });
 
 

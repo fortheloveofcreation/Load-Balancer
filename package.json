@@ -1,7 +1,6 @@
 {
   "devDependencies": {
     "axios": "^0.18.0",
-    "dockerode": "^2.5.8",
-    "fs": "0.0.1-security"
+    "dockerode": "^2.5.8"
   }
 }
