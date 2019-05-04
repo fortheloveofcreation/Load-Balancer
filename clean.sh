@@ -1,4 +1,4 @@
 #! /bin/bash
 
-docker stop $(docker ps)
-docker rm $(docker ps)
+docker stop $(docker ps -a)
+docker rm $(docker ps -a)

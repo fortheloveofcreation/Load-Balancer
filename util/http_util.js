@@ -1,27 +1,53 @@
 const axios = require('axios');
+const qs = require('qs');
 
-function makeRequest(hostUrl,request, response, callback) {
-    console.log("re method",request.method," reqUrl ",hostUrl+request.url);
-    axios({
-        method:request.method,
-        url: hostUrl+request.url,
-        responseType:'text/json'
-    })
-    .then(function(apiResp) {
-        console.log("apiResp ",apiResp);
-        if(typeof callback === 'function')
-            callback(response,apiResp);
+function makeGetReq(hostUrl,requestObj, responseObj, callback) {
+    let url = hostUrl + request.url;
+    axios.get(url)
+    .then(resp =>{
+        callback(responseObj,requestObj, resp);
     })
     .catch(err => {
-
-    // console.log("port: ",containerInfo.port," resp:",err.response.status);
-    if(err && err.response && err.response.status === 500){
-        // restart container
-     //   console.log("host: http://127.0.0.1:"+containerInfo.port+ " | health resp: "+err.response.status);
-       console.log("internal server error");
-       callback(response,err);
-    }
+        console.log("err",err);
+        responseObj.sendStatus(404);
     });
+}
+
+function makePostReq(hostUrl,request, responseObj, callback) {
+    let url = hostUrl + request.url;
+    console.log("url",request.body);
+    axios.post(url, qs.stringify(request.body))
+    .then(resp =>{
+       responseObj.sendStatus(201);
+    })
+    .catch(err => {
+        console.log("err",err);
+        responseObj.sendStatus(400);
+    });
+}
+
+function makeDelReq(hostUrl,request, responseObj, callback) {
+    let url = hostUrl + request.url;
+    axios.delete(url)
+    .then(resp =>{
+       responseObj.sendStatus(200);
+    })
+    .catch(err => {
+        console.log("err",err);
+        responseObj.sendStatus(400);
+    });
+}
+
+function makeRequest(hostUrl,request, responseObj, callback) {
+    if(request.method === "GET") {
+        makeGetReq(hostUrl,request,responseObj, callback)
+    }
+    else if(request.method === "POST")
+        makePostReq(hostUrl,request,responseObj, callback);
+    else if(request.method === "DELETE")
+        makeDelReq();
+    else
+        console.log("options req ?");
 }
 
 

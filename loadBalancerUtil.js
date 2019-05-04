@@ -7,8 +7,12 @@ var firstRequest = true;
 var TWO_MIN_IN_MSEC = 2 * 60 * 1000;
 
 
-function httpCallBack(responseObj,apiResp){
-      responseObj.sendStatus(200);
+function httpCallBack(responseObj, requestObj,apiResp){
+
+      if(requestObj.method === "GET"){
+          //console.log("resp ",apiResp.data);
+          responseObj.send(apiResp.data);
+      }
 }
 
 function loadBalancer() {

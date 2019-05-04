@@ -14,8 +14,10 @@ function listContainerCB(containersInfo) {
     var containersList =  containersInfo;
 
     if(containersList){
+
        var containers = containersList.container;
        if(containers){
+
            g_containersList = containersInfo;
            g_number_of_active_containers = containers.length;
            containers.forEach(function (containerInfo, index) {
@@ -27,10 +29,10 @@ function listContainerCB(containersInfo) {
                     })
                     .catch(err => {
 
-                       // console.log("port: ",containerInfo.port," resp:",err.response.status);
+
                         if(err && err.response && err.response.status === 500){
                             // restart container
-                         //   console.log("host: http://127.0.0.1:"+containerInfo.port+ " | health resp: "+err.response.status);
+                          //  console.log("host: http://127.0.0.1:"+containerInfo.port+ " | health resp: "+err.response.status);
                             g_containersList.container.splice(index,1);
                             g_number_of_active_containers = containers.length;
                             stopContainer(containerInfo.id,containerInfo.port);
@@ -116,9 +118,9 @@ function listContainers(callback){
     var dataJson = {
         container:[]
     };
+
 	docker.listContainers(function (err, containers) {
 	    containers.forEach(function (containerInfo) {
-	        //console.log("containerInfo: ",containerInfo);
             let contObj = {
                 "id":containerInfo.Id,
                 "port":containerInfo.Ports[1].PublicPort ? containerInfo.Ports[1].PublicPort : containerInfo.Ports[0].PublicPort,
@@ -127,8 +129,9 @@ function listContainers(callback){
             //console.log("publicPort: ",containerInfo.Ports[1].PublicPort);
             dataJson.container.unshift(contObj);
 		});
-	    if(typeof callback == "function")
-	        callback(dataJson);
+	    if(typeof callback == "function"){
+            callback(dataJson);
+        }
 	    else
 	        formContainersList(dataJson);
   });
