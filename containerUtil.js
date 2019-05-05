@@ -52,7 +52,7 @@ function healthCheck(){
     //      runContainer(port.toString());
     //  }
     // if(f_counter == 20){
-    //      let port = 8003;
+    //      let port = 8002;
     //      runContainer(port.toString());
     //  }
     //
@@ -104,11 +104,24 @@ function runContainer(port){
 			if(err) console.log(err);
 		});
 
-	});
+	})
 }
 
 function getContainers(){
     return g_containersList;
+}
+
+function isContainerRunning(portNum){
+    let index = 0;
+    let retValue = false;
+    for(index = 0; index < g_number_of_active_containers; index++){
+        if(g_containersList.container[index] && g_containersList.container[index].port === portNum){
+            retValue = true;
+            return retValue;
+        }
+    }
+
+    return retValue;
 }
 
 function formContainersList(dataJson){
@@ -152,8 +165,43 @@ function getHostUrl(){
 
 }
 
+function runXnumberOfContainers(numberOfContainers){
+    let numOfCon = numberOfContainers;
+    let conIndex = 0;
+    let contToBeStopped = numberOfContainers;
+
+    if(numberOfContainers > 10){
+        numOfCon = 10;
+    }
+
+    for(conIndex = 0; conIndex < numOfCon; conIndex++){
+        let portNumber = 8000 + conIndex;
+        if(isContainerRunning(portNumber)){
+            // dont anything
+        }else{
+            setTimeout(function () {
+               runContainer(portNumber.toString());
+            },200);
+        }
+    }
+
+    if(g_number_of_active_containers > numberOfContainers){
+        for(contToBeStopped = conIndex; contToBeStopped < g_number_of_active_containers; contToBeStopped++){
+            let portNumber = 8000 + contToBeStopped;
+            if(isContainerRunning(portNumber)){
+                stopContainer(portNumber);
+                // dont anything
+            }else{
+                //dont do anything
+            }
+        }
+    }
+}
+
+
 module.exports.init = init;
 module.exports.runContainer = runContainer;
 module.exports.listContainers = listContainers;
 module.exports.getContainers = getContainers;
 module.exports.getHostUrl = getHostUrl;
+module.exports.runXnumberOfContainers = runXnumberOfContainers;

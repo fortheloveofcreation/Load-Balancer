@@ -19,6 +19,7 @@ function loadBalancer() {
     firstRequest = true;
     let numberOfContainersTobeRun = Math.ceil(apiCounter/20);
     apiCounter = 0;
+    containerUtil.runXnumberOfContainers(numberOfContainersTobeRun);
 }
 
 function handleRequest(request, response) {
