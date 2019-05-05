@@ -41,10 +41,14 @@ app.get('/', function (req, res) {
 
 app.get('/api/v1/users/',routeToContainer);
 app.post('/api/v1/users/*',routeToContainer);
+app.post('/api/v1/users',routeToContainer);
+
 app.get('/api/v1/acts/*',routeToContainer);
 app.post('/api/v1/acts',routeToContainer);
+
 app.get('/api/v1/categories/*',routeToContainer);
 app.post('/api/v1/categories/*',routeToContainer);
+app.post('/api/v1/categories',routeToContainer);
 
 app.listen(ecExposedPort, function () {
     init();

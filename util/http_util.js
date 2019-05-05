@@ -2,7 +2,7 @@ const axios = require('axios');
 const qs = require('qs');
 
 function makeGetReq(hostUrl,requestObj, responseObj, callback) {
-    let url = hostUrl + request.url;
+    let url = hostUrl + requestObj.url;
     axios.get(url)
     .then(resp =>{
         callback(responseObj,requestObj, resp);
@@ -15,13 +15,13 @@ function makeGetReq(hostUrl,requestObj, responseObj, callback) {
 
 function makePostReq(hostUrl,request, responseObj, callback) {
     let url = hostUrl + request.url;
-    console.log("url",request.body);
+    console.log("body",request.body, " url: ",url);
     axios.post(url, qs.stringify(request.body))
     .then(resp =>{
        responseObj.sendStatus(201);
     })
     .catch(err => {
-        console.log("err",err);
+        //console.log("err",err);
         responseObj.sendStatus(400);
     });
 }

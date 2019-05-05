@@ -93,6 +93,7 @@ function runContainer(port){
                 			"HostPort": port
             			}],
         		},
+                Binds: ['/root/arsenalFC/db/:/opt/db']
     		},
 	};
 
