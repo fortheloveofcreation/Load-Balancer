@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import sqlite3
 
-conn = sqlite3.connect("selfieless.db")
+conn = sqlite3.connect("/opt/db/selfieless.db")
 c = conn.cursor()
 c.execute('PRAGMA foreign_keys = ON')
 c.execute('''CREATE TABLE users(

@@ -47,7 +47,7 @@ def user_create(user_name, password):
     """
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute('PRAGMA foreign_keys = ON')
             cur.execute(
@@ -75,7 +75,7 @@ def category_create(category_name, acts):
     global DBB_CUR
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute('PRAGMA foreign_keys = ON')
             cur.execute(
@@ -109,7 +109,7 @@ def act_create(act_id, username, timestamp, caption, category, image, upvotes):
         """
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute('PRAGMA foreign_keys = ON')
             cur.execute(
@@ -136,7 +136,7 @@ def act_exists(act_id):
         :type act_id: int
         """
 
-    with sqlite3.connect("selfieless.db") as con:
+    with sqlite3.connect("/opt/db/selfieless.db") as con:
         cur = con.cursor()
         cur.execute(
                 "SELECT EXISTS (SELECT 1 FROM acts WHERE act_id=?);",
@@ -157,7 +157,7 @@ def act_upvote(act_id):
         """
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute(
                 "UPDATE acts SET upvotes = upvotes + 1 WHERE act_id=?",
@@ -178,7 +178,7 @@ def user_remove(username):
     """
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute(
                 "DELETE FROM users WHERE usr_name=?",
@@ -201,7 +201,7 @@ def category_remove(category_name):
         """
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute(
                 "DELETE FROM categories WHERE category_name=?",
@@ -223,7 +223,7 @@ def act_remove(act_id):
         :type act_id: int
         """
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute(
                 "DELETE FROM acts WHERE act_id=?",
@@ -244,7 +244,7 @@ def category_get(category_name):
         :param category_name: Category name
         :type category_name: str
         """
-    with sqlite3.connect("selfieless.db") as con:
+    with sqlite3.connect("/opt/db/selfieless.db") as con:
         cur = con.cursor()
         #execute database query
         if category_name:
@@ -273,7 +273,7 @@ def acts_get(act_id):
         :type act_id: int
         """
 
-    with sqlite3.connect("selfieless.db") as con:
+    with sqlite3.connect("/opt/db/selfieless.db") as con:
         cur = con.cursor()
         if act_id:
             cur.execute(
@@ -308,7 +308,7 @@ def category_acts_count(category_name):
         """
 
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute(
                            "SELECT count(*) FROM acts WHERE category=?;",
@@ -331,7 +331,7 @@ def category_exists(category_name):
         :param category_name: Category name
         :type category_name: str
         """
-    with sqlite3.connect("selfieless.db") as con:
+    with sqlite3.connect("/opt/db/selfieless.db") as con:
         cur = con.cursor()
         cur.execute(
                 "SELECT EXISTS (SELECT 1 FROM categories WHERE category_name=?);",
@@ -350,7 +350,7 @@ def category_acts_get(category_name):
         :param category_name: Category name
         :type category_name: str
         """
-    with sqlite3.connect("selfieless.db") as con:
+    with sqlite3.connect("/opt/db/selfieless.db") as con:
         cur = con.cursor()
         cur.execute(
             "SELECT count(*) FROM acts WHERE category=?;",
@@ -393,7 +393,7 @@ def acts_get_count_range(category_name, startRange, endRange):
         :type endRange: int
         """
     try:
-        with sqlite3.connect("selfieless.db") as con:
+        with sqlite3.connect("/opt/db/selfieless.db") as con:
             cur = con.cursor()
             cur.execute(
                 "SELECT * FROM acts WHERE category=? AND ROWID > ? AND ROWID <= ?;",
@@ -631,7 +631,7 @@ def handle_error(e):
 #   MAIN FUNCTION                                                #
 #################################################################
 def create_db():
-    conn = sqlite3.connect("selfieless.db")
+    conn = sqlite3.connect("/opt/db/selfieless.db")
     c = conn.cursor()
     c.execute('PRAGMA foreign_keys = ON')
     c.execute('''CREATE TABLE users(
@@ -665,6 +665,6 @@ if __name__ == "__main__":
     atexit.register(shutdown)
     #Start the database
     #check_same_thread is set to False to allow the connection to run on multiple threads
-    conn = sqlite3.connect("selfieless.db", check_same_thread=False)
+    conn = sqlite3.connect("/opt/db/selfieless.db", check_same_thread=False)
     cursor = conn.cursor()
     APP.run(debug=False)

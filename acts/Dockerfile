@@ -5,6 +5,7 @@ WORKDIR /opt/acts
 COPY . .
 
 ENTRYPOINT ["/opt/acts/start.sh"]
+RUN mkdir -p /opt/db
 # Add packages needed to build native dependencies
 RUN curl https://bootstrap.pypa.io/get-pip.py | python && pip install flask
 RUN chmod 777 start.sh
