@@ -70,10 +70,13 @@ function init(debug_value) {
     setInterval(healthCheck,ONE_SEC_IN_MS);
 }
 
-function stopContainer(id,port) {
-    var that = this;
+function stopContainer(id, port, reRun) {
+    let portNum = (typeof(port) === "string") ? port : port.toString();
+    let reSpin = (reRun === false) ? false : true;
     this.containerStopCB = function () {
-        runContainer(port.toString());
+        console.log("<SH> stopContainer reRun",reRun," respin ",reSpin);
+        if(reSpin)
+            runContainer(portNum);
     };
 
     docker.getContainer(id).stop(this.containerStopCB);
@@ -117,7 +120,7 @@ function isContainerRunning(portNum){
     for(index = 0; index < g_number_of_active_containers; index++){
         if(g_containersList.container[index] && g_containersList.container[index].port === portNum){
             retValue = true;
-            return retValue;
+            return g_containersList.container[index].id;
         }
     }
 
@@ -169,6 +172,7 @@ function runXnumberOfContainers(numberOfContainers){
     let numOfCon = numberOfContainers;
     let conIndex = 0;
     let contToBeStopped = numberOfContainers;
+    console.log("<SH> runXnumberOfContainers | runXnumberOfContainers",numberOfContainers);
 
     if(numberOfContainers > 10){
         numOfCon = 10;
@@ -176,6 +180,8 @@ function runXnumberOfContainers(numberOfContainers){
 
     for(conIndex = 0; conIndex < numOfCon; conIndex++){
         let portNumber = 8000 + conIndex;
+        console.log("<SH> portNumber ",portNumber);
+
         if(isContainerRunning(portNumber)){
             // dont anything
         }else{
@@ -188,8 +194,11 @@ function runXnumberOfContainers(numberOfContainers){
     if(g_number_of_active_containers > numberOfContainers){
         for(contToBeStopped = conIndex; contToBeStopped < g_number_of_active_containers; contToBeStopped++){
             let portNumber = 8000 + contToBeStopped;
-            if(isContainerRunning(portNumber)){
-                stopContainer(portNumber);
+            let containerId = isContainerRunning(portNumber);
+            console.log("contToBeStopped ",portNumber);
+            if(containerId){
+                console.log("isContainerRunning | contToBeStopped ",portNumber);
+                stopContainer(containerId,portNumber, false);
                 // dont anything
             }else{
                 //dont do anything

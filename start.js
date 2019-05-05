@@ -46,6 +46,7 @@ app.post('/api/v1/users',routeToContainer);
 app.get('/api/v1/acts/*',routeToContainer);
 app.post('/api/v1/acts',routeToContainer);
 
+app.get('/api/v1/categories',routeToContainer);
 app.get('/api/v1/categories/*',routeToContainer);
 app.post('/api/v1/categories/*',routeToContainer);
 app.post('/api/v1/categories',routeToContainer);

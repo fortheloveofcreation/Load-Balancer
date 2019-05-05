@@ -4,7 +4,7 @@ from werkzeug.exceptions import HTTPException
 import atexit
 from flask import Flask, request, Response, render_template, jsonify
 APP = Flask(__name__)
-
+is_crashed = False
 
 ##################################################################
 #   START/END FUNCTIONS                                          #
@@ -627,6 +627,27 @@ def handle_error(e):
     except:
         return jsonify(error=405), 500
 
+@APP.route("/api/v1/_health", methods=["GET"])
+def api_act_health():
+    """
+        This function returns health of container
+        """
+    if is_crashed:
+        return jsonify(error=500), 500
+    else:
+        return jsonify(success=200), 200
+
+@APP.route("/api/v1/_crash", methods=["POST"])
+def api_act_crash():
+    """
+        This function returns health of container
+        """
+    if is_crashed:
+        return jsonify(error=500), 500
+    else:
+        global is_crashed
+        is_crashed = True
+        return jsonify(success=200), 200
 ##################################################################
 #   MAIN FUNCTION                                                #
 #################################################################

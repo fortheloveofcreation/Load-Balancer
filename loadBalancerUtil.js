@@ -16,6 +16,7 @@ function httpCallBack(responseObj, requestObj,apiResp){
 }
 
 function loadBalancer() {
+    console.log("loadbalancer called after every 2 min");
     firstRequest = true;
     let numberOfContainersTobeRun = Math.ceil(apiCounter/20);
     apiCounter = 0;
@@ -24,16 +25,19 @@ function loadBalancer() {
 
 function handleRequest(request, response) {
     apiCounter++;
+    console.log("handleRequest | apiCounter ",apiCounter);
     if(firstRequest){
         firstRequest = false;
-        timerHandler = setTimeout(loadBalancer, TWO_MIN_IN_MSEC);
-        // start timer for 2 min
+        if(timerHandler)
+            clearTimeout(timerHandler);
+        console.log("handleRequest | firstReq made after 2/0 min");
+        timerHandler = setTimeout(loadBalancer, TWO_MIN_IN_MSEC);// start timer for 2 min
     }
 
     var hostUrl = containerUtil.getHostUrl();
-
-    http_util.makeRequest(hostUrl, request, response, httpCallBack);
     //console.log("<loadBalancerUtil> url: "+url);
+    http_util.makeRequest(hostUrl, request, response, httpCallBack);
+    console.log("<loadBalancerUtil> url: "+hostUrl);
 }
 
 
