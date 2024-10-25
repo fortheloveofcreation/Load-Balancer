@@ -1,7 +1,7 @@
 # selfiless-acts
 
 
-##  Build a acts docker image
+##  Build an acts docker image
 
 ```
 cd acts
